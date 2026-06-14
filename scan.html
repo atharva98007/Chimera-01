@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Phishing Scanner - Chimera</title>
+    <link rel="stylesheet" href="css/chimera.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-page="scan">
+    <div class="cosmic-bg" aria-hidden="true">
+        <canvas id="starfield"></canvas>
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+        <div class="nebula nebula-3"></div>
+        <div class="aurora"></div>
+        <div class="cosmic-grid"></div>
+        <div class="shooting-stars"><span></span><span></span><span></span><span></span><span></span></div>
+    </div>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <a href="index.html" class="logo"><span>Chimera</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="scan.html" class="active">URL Scanner</a></li>
+                    <li><a href="email-check.html">Email Checker</a></li>
+                    <li><a href="learn.html">Awareness Hub</a></li>
+                    <li><a href="report.html">Report Suspicious Site</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+                    <a href="login.html" class="btn btn-outline btn-sm">Login</a>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="scanner-main">
+        <div class="container">
+            <div class="scanner-header">
+                <h1>URL Phishing Scanner</h1>
+                <p>Analyze any URL for phishing threats, malicious patterns, and security risks</p>
+            </div>
+
+            <section class="url-input-section">
+                <div class="scanner-card">
+                    <div class="input-group">
+                        <label for="urlInput">Enter URL to Scan</label>
+                        <div class="url-input-wrapper">
+                            <input type="text" id="urlInput" placeholder="https://example.com" class="url-input">
+                            <button id="scanBtn" class="btn btn-primary scan-button">
+                                <i class="fas fa-search"></i> Scan Now
+                            </button>
+                        </div>
+                        <div class="input-suggestions">
+                            <span class="suggestion-text">Try these examples:</span>
+                            <div class="suggestion-row">
+                                <button class="suggestion-btn" onclick="setExampleUrl('https://google.com')">https://google.com</button>
+                                <button class="suggestion-btn" onclick="setExampleUrl('http://paypal-secure-login.com')">http://paypal-secure-login.com</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="loadingSection" class="loading-section" style="display: none;">
+                <div class="loading-card">
+                    <h3 class="pulsing-text">Scanning URL...</h3>
+                    <p>Analyzing security patterns and checking against threat databases</p>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+            </section>
+
+            <section id="resultsSection" class="results-section" style="display: none;">
+
+                <div class="risk-score-card">
+                    <div class="risk-col-left">
+                        <h2 class="risk-title">Verdict</h2>
+                        <div id="riskBadge" class="risk-badge">
+                            <span id="riskLevel">Safe</span>
+                        </div>
+                    </div>
+                    <div class="risk-col-center">
+                        <h3 class="action-title">Recommended Actions</h3>
+                        <div id="recommendationsList" class="recommendations-list-compact"></div>
+                    </div>
+                    <div class="risk-col-right">
+                        <div class="score-circle">
+                            <div class="score-text-wrapper">
+                                <span id="scoreValue">--</span>
+                                <span class="score-label">Safety</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-details">
+                    <h3>Security Analysis</h3>
+                    <div class="analysis-grid">
+                        <div class="analysis-item" id="card-ssl">
+                            <div class="analysis-icon"><i class="fas fa-lock"></i></div>
+                            <div class="analysis-content"><h4>SSL Certificate</h4><p id="sslStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-age">
+                            <div class="analysis-icon"><i class="fas fa-calendar"></i></div>
+                            <div class="analysis-content"><h4>Domain Age</h4><p id="domainAge">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-blacklist">
+                            <div class="analysis-icon"><i class="fas fa-globe"></i></div>
+                            <div class="analysis-content"><h4>Threat Intel</h4><p id="blacklistStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-redirects">
+                            <div class="analysis-icon"><i class="fas fa-random"></i></div>
+                            <div class="analysis-content"><h4>Redirect Chain</h4><p id="redirectBehavior">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-homoglyph">
+                            <div class="analysis-icon"><i class="fas fa-font"></i></div>
+                            <div class="analysis-content"><h4>Homoglyph Attack</h4><p id="homoglyphStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-favicon">
+                            <div class="analysis-icon"><i class="fas fa-image"></i></div>
+                            <div class="analysis-content"><h4>Favicon Match</h4><p id="faviconStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-abuse">
+                            <div class="analysis-icon"><i class="fas fa-mask"></i></div>
+                            <div class="analysis-content"><h4>Domain Abuse</h4><p id="abuseStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-obfuscation">
+                            <div class="analysis-icon"><i class="fas fa-code"></i></div>
+                            <div class="analysis-content"><h4>Obfuscation</h4><p id="obfuscationStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-flux">
+                            <div class="analysis-icon"><i class="fas fa-network-wired"></i></div>
+                            <div class="analysis-content"><h4>DNS Fast Flux</h4><p id="fluxStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-datauri">
+                            <div class="analysis-icon"><i class="fas fa-file-code"></i></div>
+                            <div class="analysis-content"><h4>Data URI</h4><p id="dataUriStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-random">
+                            <div class="analysis-icon"><i class="fas fa-dice"></i></div>
+                            <div class="analysis-content"><h4>Random Domain</h4><p id="randomStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-structure">
+                            <div class="analysis-icon"><i class="fas fa-sitemap"></i></div>
+                            <div class="analysis-content"><h4>URL Structure</h4><p id="structureStatus">...</p></div>
+                        </div>
+                        <div class="analysis-item" id="card-path">
+                            <div class="analysis-icon"><i class="fas fa-folder-open"></i></div>
+                            <div class="analysis-content"><h4>Path Analysis</h4><p id="pathStatus">...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button onclick="scanAnother()" class="btn btn-secondary"><i class="fas fa-redo"></i> Scan Another</button>
+                    <button onclick="reportSuspicious()" class="btn btn-outline"><i class="fas fa-flag"></i> Report Site</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Chimera. Smart Phishing Detection.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/chimera-core.js"></script>
+</body>
+</html>

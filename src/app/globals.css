@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #050505;
+  --fg-base: #f0f4ff;
+}
+
+[data-theme="light"] {
+  --bg-base: #ffffff;
+  --fg-base: #0f172a;
+}
+
+:root {
+  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--fg-base);
+  background: var(--bg-base);
+  transition: background-color 0.5s ease, color 0.4s ease;
+}
+
+[data-theme="dark"] body {
+  background: #050505;
+}
+
+[data-theme="light"] body {
+  background: #fafafa;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.2);
+  color: inherit;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Custom scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.3);
+  border-radius: 4px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(29, 78, 216, 0.25);
+  border-radius: 4px;
+}
+
+/* Ensure typed text stays visible in dark mode (browser defaults can override Tailwind) */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  color: #f4f4f5;
+  color-scheme: dark;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: rgba(161, 161, 170, 0.75);
+}
+
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] textarea:-webkit-autofill {
+  -webkit-text-fill-color: #f4f4f5;
+  caret-color: #f4f4f5;
+  box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5) inset;
+}
+
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  color: #18181b;
+  color-scheme: light;
+}
