@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Chimera — Premium Phishing Scanner (Next.js)
 
 Apple-inspired scroll storytelling, dual themes, and a fully client-side scan pipeline.
@@ -44,3 +45,6 @@ https://my-bank-verify.net
 ```
 https://google.com
 ```
+=======
+# Chimera-01
+>>>>>>> 45590dfdccaa2bbf06a9e323381b0e05ce686bea
