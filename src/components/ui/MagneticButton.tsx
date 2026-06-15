@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, type ReactNode, type MouseEvent } from "react";
+import { useLowPerf } from "@/hooks/useLowPerf";
 import { useTheme } from "@/context/ThemeContext";
 import { themeTokens } from "@/lib/themes";
 import { APPLE_EASE } from "@/lib/motion";
@@ -36,6 +37,8 @@ export function MagneticButton({
   const springX = useSpring(x, { stiffness: 280, damping: 22 });
   const springY = useSpring(y, { stiffness: 280, damping: 22 });
 
+  const lowPerf = useLowPerf();
+
   const handleMove = (e: MouseEvent) => {
     if (!ref.current || disabled) return;
     const rect = ref.current.getBoundingClientRect();
@@ -47,6 +50,27 @@ export function MagneticButton({
     x.set(0);
     y.set(0);
   };
+
+  if (lowPerf) {
+    return (
+      <button
+        ref={ref}
+        type={type}
+        disabled={disabled}
+        onClick={onClick}
+        className={cn(
+          "relative overflow-hidden rounded-full px-4 py-2 text-sm font-medium tracking-wide transition-shadow duration-300",
+          variant === "primary" && t.btnPrimary,
+          variant === "ghost" && t.btnGhost,
+          variant === "outline" && t.btnGhost,
+          disabled && "cursor-not-allowed opacity-45",
+          className
+        )}
+      >
+        <span className="relative z-10 flex items-center justify-center gap-2">{children}</span>
+      </button>
+    );
+  }
 
   return (
     <motion.button

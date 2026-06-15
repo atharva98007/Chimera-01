@@ -5,23 +5,26 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import type { ISourceOptions } from "@tsparticles/engine";
 import { useTheme } from "@/context/ThemeContext";
+import { useLowPerf } from "@/hooks/useLowPerf";
 
 export function ParticleBackground() {
   const { theme } = useTheme();
   const [ready, setReady] = useState(false);
+  const lowPerf = useLowPerf();
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
     }).then(() => setReady(true));
   }, []);
-
-  const options: ISourceOptions = useMemo(() => {
+  const options: ISourceOptions | null = useMemo(() => {
+    const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || lowPerf) return null;
     if (theme === "dark") {
       return {
         fullScreen: { enable: false },
         background: { color: { value: "transparent" } },
-        fpsLimit: 60,
+        fpsLimit: 45,
         interactivity: {
           detectsOn: "window",
           events: {
@@ -42,7 +45,7 @@ export function ParticleBackground() {
             width: 0.5,
           },
           move: { enable: true, speed: 0.35, random: true },
-          number: { density: { enable: true, width: 1920, height: 1080 }, value: 55 },
+          number: { density: { enable: true, width: 1920, height: 1080 }, value: 35 },
           opacity: { value: { min: 0.08, max: 0.35 } },
           size: { value: { min: 0.4, max: 1.2 } },
         },
@@ -53,7 +56,7 @@ export function ParticleBackground() {
     return {
       fullScreen: { enable: false },
       background: { color: { value: "transparent" } },
-      fpsLimit: 60,
+      fpsLimit: 45,
       interactivity: {
         detectsOn: "window",
         events: {
@@ -66,7 +69,7 @@ export function ParticleBackground() {
         color: { value: "#94a3b8" },
         links: { enable: true, distance: 100, opacity: 0.12, width: 0.5, color: "#cbd5e1" },
         move: { enable: true, speed: 0.25 },
-        number: { density: { enable: true, width: 1920, height: 1080 }, value: 35 },
+        number: { density: { enable: true, width: 1920, height: 1080 }, value: 25 },
         opacity: { value: { min: 0.15, max: 0.4 } },
         size: { value: { min: 0.8, max: 1.5 } },
       },
@@ -74,7 +77,7 @@ export function ParticleBackground() {
     };
   }, [theme]);
 
-  if (!ready) return null;
+  if (!ready || !options) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[1] opacity-80">

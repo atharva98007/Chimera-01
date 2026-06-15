@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { Shield } from "lucide-react";
 
@@ -50,7 +50,6 @@ export function Navbar() {
 
   const router = useRouter();
   const [user, setUser] = useState<{ fullName?: string; email: string } | null>(null);
-  const { scrollY } = useScroll();
 
   useEffect(() => {
     const loadUser = () => {
@@ -77,7 +76,11 @@ export function Navbar() {
     };
 
     window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    window.addEventListener("chimera_user_changed", loadUser);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("chimera_user_changed", loadUser);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -86,48 +89,22 @@ export function Navbar() {
     router.push("/");
   };
 
-  const headerBg = useTransform(
+  const headerBg = isDark
+    ? "rgba(5, 5, 5, 0.92)"
+    : "rgba(255, 255, 255, 0.95)";
 
-    scrollY,
-
-    [0, 100],
-
-    isDark
-
-      ? ["rgba(5, 5, 5, 0.55)", "rgba(5, 5, 5, 0.92)"]
-
-      : ["rgba(255, 255, 255, 0.7)", "rgba(255, 255, 255, 0.95)"]
-
-  );
-
-  const borderColor = useTransform(
-
-    scrollY,
-
-    [0, 100],
-
-    isDark
-
-      ? ["rgba(255,255,255,0.04)", "rgba(255,255,255,0.08)"]
-
-      : ["rgba(0,0,0,0.04)", "rgba(0,0,0,0.08)"]
-
-  );
+  const borderColor = isDark
+    ? "rgba(255,255,255,0.08)"
+    : "rgba(0,0,0,0.08)";
 
 
 
   return (
-
     <motion.header
-
       initial={{ y: -20, opacity: 0 }}
-
       animate={{ y: 0, opacity: 1 }}
-
       transition={{ duration: 0.7, ease: APPLE_EASE }}
-
-      style={{ backgroundColor: headerBg, borderBottom: "1px solid", borderColor }}
-
+      style={{ backgroundColor: headerBg, borderBottom: "1px solid", borderColor: borderColor }}
       className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl"
 
     >
@@ -212,7 +189,7 @@ export function Navbar() {
 
 
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2 flex-nowrap">
 
           {user ? (
             <div className="flex items-center gap-3">
@@ -237,32 +214,52 @@ export function Navbar() {
                 Logout
               </button>
             </div>
-          ) : (
-            <>
+          ) : null}
+
+            {/* Mobile-only quick links for Agentic and Sandboxing */}
+            <div className="flex items-center gap-1 lg:hidden">
               <Link
-                href="/login"
+                href="/agentic"
                 className={cn(
-                  "hidden rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 sm:block",
+                  "rounded-md px-1.5 py-1 text-xs font-medium whitespace-nowrap",
                   t.muted,
                   isDark ? "hover:text-zinc-100" : "hover:text-zinc-900"
                 )}
               >
-                Log in
+                Agentic
               </Link>
-              <Link href="/signup">
-                <span
+              <Link
+                href="/sandboxing"
+                className={cn(
+                  "rounded-md px-1.5 py-1 text-xs font-medium whitespace-nowrap",
+                  t.muted,
+                  isDark ? "hover:text-zinc-100" : "hover:text-zinc-900"
+                )}
+              >
+                Sandbox
+              </Link>
+            </div>
+
+            {/* Re-add login/signup at end for mobile */}
+            {user ? null : (
+              <>
+                <Link
+                  href="/login"
                   className={cn(
-                    "inline-flex rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300",
-                    t.btnPrimary
+                    "rounded-lg px-1.5 py-1.5 text-[0.65rem] font-medium transition-colors duration-300 sm:px-3 sm:py-2 sm:text-sm whitespace-nowrap",
+                    t.muted,
+                    isDark ? "hover:text-zinc-100" : "hover:text-zinc-900"
                   )}
                 >
-                  Sign up
-                </span>
-              </Link>
-            </>
-          )}
+                  Log in
+                </Link>
+                {/* Sign up removed per request */}
+              </>
+            )}
 
-          <ThemeToggle />
+            <div className="-ml-1">
+              <ThemeToggle />
+            </div>
 
         </div>
 

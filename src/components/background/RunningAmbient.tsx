@@ -16,6 +16,10 @@ export function RunningAmbient() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return null;
+  }
+
   return (
     <div className="pointer-events-none fixed inset-0 z-[2] overflow-hidden" aria-hidden>
       {streaks.map((s) => (

@@ -149,6 +149,9 @@ export function AuthForm({ mode }: AuthFormProps) {
         setSuccess("Login successful! Redirecting…");
         // Store minimal user info (in production use next-auth or JWT)
         sessionStorage.setItem("chimera_user", JSON.stringify(data.user));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("chimera_user_changed"));
+        }
         setTimeout(() => router.push("/"), 1200);
       } else {
         setSuccess("Account created! Redirecting…");
@@ -160,6 +163,9 @@ export function AuthForm({ mode }: AuthFormProps) {
             email: formData.email.trim().toLowerCase(),
           })
         );
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("chimera_user_changed"));
+        }
         setTimeout(() => router.push("/"), 1800);
       }
     } catch {

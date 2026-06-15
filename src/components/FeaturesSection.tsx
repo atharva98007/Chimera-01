@@ -1,7 +1,7 @@
 "use client";
 
 import { Brain, Mail, Fingerprint, Link2, Lock, ShieldCheck } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { TiltCard } from "@/components/features/TiltCard";
 import { useTheme } from "@/context/ThemeContext";
 import { themeTokens } from "@/lib/themes";
@@ -44,15 +44,11 @@ const features = [
 export function FeaturesSection() {
   const { theme } = useTheme();
   const t = themeTokens[theme];
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0.5, 0.85], [60, 0]);
-  const opacity = useTransform(scrollYProgress, [0.5, 0.75], [0, 1]);
 
   return (
-    <motion.section
+    <section
       id="features"
-      style={{ y, opacity }}
-      className="relative py-28"
+      className="relative pt-[100vh] lg:pt-[100vh] lg:pb-28"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -65,7 +61,7 @@ export function FeaturesSection() {
           <p className={cn("text-[11px] font-medium uppercase tracking-[0.35em]", t.muted)}>
             Capabilities
           </p>
-          <h2 className={cn("mt-4 text-3xl font-light tracking-tight sm:text-4xl", t.text)}>
+          <h2 className={cn("mt-4 text-3xl font-light tracking-tight sm:text-4xl leading-relaxed", t.text)}>
             Security, refined
           </h2>
         </motion.div>
@@ -76,6 +72,6 @@ export function FeaturesSection() {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { TabPanels } from "./TabPanels";
 import type { ScanSession, DashboardTab } from "@/hooks/useScanSession";
 import { useNavigationSplash } from "@/context/NavigationSplashContext";
+import { useLowPerf } from "@/hooks/useLowPerf";
 
 const TABS: { id: DashboardTab; label: string; icon: typeof Radar }[] = [
   { id: "quick", label: "Quick Scan", icon: Radar },
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export function ScanConsole({ session }: Props) {
+  const lowPerf = useLowPerf();
   const { theme } = useTheme();
   const t = themeTokens[theme];
   const { activeTab, setActiveTab, isBusy } = session;
@@ -57,15 +59,14 @@ export function ScanConsole({ session }: Props) {
                 )}
               >
                 {active && (
-                  <motion.span
-                    layoutId="tab-indicator"
+                  <div
+                    aria-hidden
                     className={cn(
-                      "absolute inset-0 rounded-xl",
+                      "absolute inset-0 rounded-xl transition-all duration-300",
                       theme === "dark"
                         ? "bg-white/[0.06] border border-white/10"
                         : "bg-zinc-900/5 border border-zinc-300"
                     )}
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-2">
@@ -78,17 +79,23 @@ export function ScanConsole({ session }: Props) {
         </div>
       </LayoutGroup>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab + (isBusy ? "-busy" : session.status)}
-          initial={{ opacity: 0, x: 28, filter: "blur(6px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, x: -28, filter: "blur(4px)" }}
-          transition={{ duration: 0.45, ease: APPLE_EASE }}
-        >
+      {lowPerf ? (
+        <div>
           <TabPanels session={session} tab={activeTab} />
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      ) : (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab + (isBusy ? "-busy" : session.status)}
+            initial={{ opacity: 0, x: 28, filter: "blur(6px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: -28, filter: "blur(4px)" }}
+            transition={{ duration: 0.45, ease: APPLE_EASE }}
+          >
+            <TabPanels session={session} tab={activeTab} />
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }

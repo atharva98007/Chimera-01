@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { type ReactNode, useRef } from "react";
+import { useLowPerf } from "@/hooks/useLowPerf";
 import { useTheme } from "@/context/ThemeContext";
 import { themeTokens } from "@/lib/themes";
 import { APPLE_EASE } from "@/lib/motion";
@@ -21,10 +22,30 @@ export function TiltCard({ children, className, icon, title, description, delay 
   const { theme } = useTheme();
   const t = themeTokens[theme];
 
+  const lowPerf = useLowPerf();
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { stiffness: 200, damping: 28 });
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { stiffness: 200, damping: 28 });
+
+  if (lowPerf) {
+    return (
+      <div className={cn("h-full rounded-2xl border p-6 transition-all duration-300", className)}>
+        <div
+          className={cn(
+            "mb-5 flex h-12 w-12 items-center justify-center rounded-xl border",
+            theme === "dark" ? "border-white/[0.06] bg-white/[0.03]" : "border-zinc-200 bg-zinc-50"
+          )}
+        >
+          {icon}
+        </div>
+        <h3 className={cn("text-base font-medium tracking-tight", t.text)}>{title}</h3>
+        <p className={cn("mt-2 text-sm leading-relaxed", t.muted)}>{description}</p>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div
