@@ -9,9 +9,12 @@ export function ThemeRippleOverlay() {
   const { isTransitioning, rippleOrigin, rippleTarget } = useTheme();
   const [size, setSize] = useState(2000);
   const lowPerf = useLowPerf();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    setIsMounted(true);
     const update = () =>
       setSize(Math.max(window.innerWidth, window.innerHeight) * 2.5);
     update();
@@ -19,12 +22,7 @@ export function ThemeRippleOverlay() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  if (typeof window === "undefined") return null;
-  useEffect(() => {
-    setIsMobile(/Mobi|Android/i.test(navigator.userAgent || ""));
-  }, []);
-
-  if (!rippleOrigin || !rippleTarget) return null;
+  if (!isMounted || !rippleOrigin || !rippleTarget) return null;
 
   const fill =
     rippleTarget === "dark"

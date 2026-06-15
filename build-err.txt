@@ -1,0 +1,17 @@
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Projects\CHIMERA_2.0\Chimera-main\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\Projects\CHIMERA_2.0\Chimera-main\Website\package-lock.json
+
+
+Failed to compile.
+
+./src/components/background/ParticleBackground.tsx
+78:6  Warning: React Hook useMemo has a missing dependency: 'lowPerf'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/ThemeRippleOverlay.tsx
+23:3  Error: React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render.  react-hooks/rules-of-hooks
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

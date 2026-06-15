@@ -75,7 +75,7 @@ export function ParticleBackground() {
       },
       detectRetina: true,
     };
-  }, [theme]);
+  }, [theme, lowPerf]);
 
   if (!ready || !options) return null;
 
